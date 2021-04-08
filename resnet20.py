@@ -20,171 +20,224 @@
 
 import tensorflow as tf
 from tensorflow.keras import Model, Input
-from tensorflow.keras.layers import Conv2D, Dense, BatchNormalization, \
-	ReLU, Add, Activation
-from tensorflow.keras.layers import AveragePooling2D, GlobalAvgPool2D, \
-	Dropout
+from tensorflow.keras.layers import (
+    Conv2D,
+    Dense,
+    BatchNormalization,
+    ReLU,
+    Add,
+    Activation,
+)
+from tensorflow.keras.layers import AveragePooling2D, GlobalAvgPool2D, Dropout
 from tensorflow.keras.regularizers import l2
 
 WEIGHT_DECAY = 0.0005
 
 
 def stem(inputs):
-	''' Construct Stem Convolutional Group
-		inputs : the input vector
-	'''
-	x = Conv2D(16, (3, 3), strides=(1, 1), padding='same',
-			   use_bias=False, kernel_regularizer=l2(WEIGHT_DECAY))(
-		inputs)
-	x = BatchNormalization(gamma_regularizer=l2(WEIGHT_DECAY),
-						   beta_regularizer=l2(WEIGHT_DECAY))(x)
-	x = ReLU()(x)
-	return x
+    """Construct Stem Convolutional Group
+    inputs : the input vector
+    """
+    x = Conv2D(
+        16,
+        (3, 3),
+        strides=(1, 1),
+        padding="same",
+        use_bias=False,
+        kernel_regularizer=l2(WEIGHT_DECAY),
+    )(inputs)
+    x = BatchNormalization(
+        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
+    )(x)
+    x = ReLU()(x)
+    return x
 
 
 def learner(x, n_blocks):
-	""" Construct the Learner
-		x          : input to the learner
-		n_blocks   : number of blocks in a group
-	"""
-	# First Residual Block Group of 16 filters (Stage 1)
-	# Quadruple (4X) the size of filters to fit the next Residual Group
-	x = residual_group(x, 16, n_blocks, strides=(1, 1), n=4)
+    """Construct the Learner
+    x          : input to the learner
+    n_blocks   : number of blocks in a group
+    """
+    # First Residual Block Group of 16 filters (Stage 1)
+    # Quadruple (4X) the size of filters to fit the next Residual Group
+    x = residual_group(x, 16, n_blocks, strides=(1, 1), n=4)
 
-	# Second Residual Block Group of 64 filters (Stage 2)
-	# Double (2X) the size of filters and reduce feature maps by 75% (strides=2) to fit the next Residual Group
-	x = residual_group(x, 64, n_blocks, n=2)
+    # Second Residual Block Group of 64 filters (Stage 2)
+    # Double (2X) the size of filters and reduce feature maps by 75% (strides=2) to fit the next Residual Group
+    x = residual_group(x, 64, n_blocks, n=2)
 
-	# Third Residual Block Group of 64 filters (Stage 3)
-	# Double (2X) the size of filters and reduce feature maps by 75% (strides=2) to fit the next Residual Group
-	x = residual_group(x, 128, n_blocks, n=2)
-	return x
+    # Third Residual Block Group of 64 filters (Stage 3)
+    # Double (2X) the size of filters and reduce feature maps by 75% (strides=2) to fit the next Residual Group
+    x = residual_group(x, 128, n_blocks, n=2)
+    return x
 
 
 def residual_group(x, n_filters, n_blocks, strides=(2, 2), n=2):
-	""" Construct a Residual Group
-		x         : input into the group
-		n_filters : number of filters for the group
-		n_blocks  : number of residual blocks with identity link
-		strides   : whether the projection block is a strided convolution
-		n         : multiplier for the number of filters out
-	"""
-	# Double the size of filters to fit the first Residual Group
-	x = projection_block(x, n_filters, strides=strides, n=n)
+    """Construct a Residual Group
+    x         : input into the group
+    n_filters : number of filters for the group
+    n_blocks  : number of residual blocks with identity link
+    strides   : whether the projection block is a strided convolution
+    n         : multiplier for the number of filters out
+    """
+    # Double the size of filters to fit the first Residual Group
+    x = projection_block(x, n_filters, strides=strides, n=n)
 
-	# Identity residual blocks
-	for _ in range(n_blocks):
-		x = identity_block(x, n_filters, n)
-	return x
+    # Identity residual blocks
+    for _ in range(n_blocks):
+        x = identity_block(x, n_filters, n)
+    return x
 
 
 def identity_block(x, n_filters, n=2):
-	""" Construct a Bottleneck Residual Block of Convolutions
-		x        : input into the block
-		n_filters: number of filters
-		n        : multiplier for filters out
-	"""
-	# Save input vector (feature maps) for the identity link
-	shortcut = x
+    """Construct a Bottleneck Residual Block of Convolutions
+    x        : input into the block
+    n_filters: number of filters
+    n        : multiplier for filters out
+    """
+    # Save input vector (feature maps) for the identity link
+    shortcut = x
 
-	## Construct the 1x1, 3x3, 1x1 residual block (fig 3c)
+    ## Construct the 1x1, 3x3, 1x1 residual block (fig 3c)
 
-	# Dimensionality reduction
-	x = BatchNormalization(gamma_regularizer=l2(WEIGHT_DECAY),
-						   beta_regularizer=l2(WEIGHT_DECAY))(x)
-	x = ReLU()(x)
-	x = Conv2D(n_filters, (1, 1), strides=(1, 1), use_bias=False,
-			   kernel_regularizer=l2(WEIGHT_DECAY))(x)
+    # Dimensionality reduction
+    x = BatchNormalization(
+        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
+    )(x)
+    x = ReLU()(x)
+    x = Conv2D(
+        n_filters,
+        (1, 1),
+        strides=(1, 1),
+        use_bias=False,
+        kernel_regularizer=l2(WEIGHT_DECAY),
+    )(x)
 
-	# Bottleneck layer
-	x = BatchNormalization(gamma_regularizer=l2(WEIGHT_DECAY),
-						   beta_regularizer=l2(WEIGHT_DECAY))(x)
-	x = ReLU()(x)
-	x = Conv2D(n_filters, (3, 3), strides=(1, 1), padding="same",
-			   use_bias=False, kernel_regularizer=l2(WEIGHT_DECAY))(x)
+    # Bottleneck layer
+    x = BatchNormalization(
+        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
+    )(x)
+    x = ReLU()(x)
+    x = Conv2D(
+        n_filters,
+        (3, 3),
+        strides=(1, 1),
+        padding="same",
+        use_bias=False,
+        kernel_regularizer=l2(WEIGHT_DECAY),
+    )(x)
 
-	# Dimensionality restoration - increase the number of output filters by 2X or 4X
-	x = BatchNormalization(gamma_regularizer=l2(WEIGHT_DECAY),
-						   beta_regularizer=l2(WEIGHT_DECAY),
-						   gamma_initializer="zeros")(x)
-	x = ReLU()(x)
-	x = Conv2D(n_filters * n, (1, 1), strides=(1, 1),
-			   use_bias=False, kernel_regularizer=l2(WEIGHT_DECAY))(x)
+    # Dimensionality restoration - increase the number of output filters by 2X or 4X
+    x = BatchNormalization(
+        gamma_regularizer=l2(WEIGHT_DECAY),
+        beta_regularizer=l2(WEIGHT_DECAY),
+        gamma_initializer="zeros",
+    )(x)
+    x = ReLU()(x)
+    x = Conv2D(
+        n_filters * n,
+        (1, 1),
+        strides=(1, 1),
+        use_bias=False,
+        kernel_regularizer=l2(WEIGHT_DECAY),
+    )(x)
 
-	# Add the identity link (input) to the output of the residual block
-	x = Add()([x, shortcut])
-	return x
+    # Add the identity link (input) to the output of the residual block
+    x = Add()([x, shortcut])
+    return x
 
 
 def projection_block(x, n_filters, strides=(2, 2), n=2):
-	""" Construct a Bottleneck Residual Block with Projection Shortcut
-		Increase the number of filters by 2X (or 4X on first stage)
-		x        : input into the block
-		n_filters: number of filters
-		strides  : whether the first convolution is strided
-		n        : multiplier for number of filters out
-	"""
-	# Construct the projection shortcut
-	# Increase filters by 2X (or 4X) to match shape when added to output of block
-	shortcut = Conv2D(n_filters * n, (1, 1), strides=strides,
-					  use_bias=False,
-					  kernel_regularizer=l2(WEIGHT_DECAY))(x)
+    """Construct a Bottleneck Residual Block with Projection Shortcut
+    Increase the number of filters by 2X (or 4X on first stage)
+    x        : input into the block
+    n_filters: number of filters
+    strides  : whether the first convolution is strided
+    n        : multiplier for number of filters out
+    """
+    # Construct the projection shortcut
+    # Increase filters by 2X (or 4X) to match shape when added to output of block
+    shortcut = Conv2D(
+        n_filters * n,
+        (1, 1),
+        strides=strides,
+        use_bias=False,
+        kernel_regularizer=l2(WEIGHT_DECAY),
+    )(x)
 
-	## Construct the 1x1, 3x3, 1x1 convolution block
+    ## Construct the 1x1, 3x3, 1x1 convolution block
 
-	# Dimensionality reduction
-	x = BatchNormalization(gamma_regularizer=l2(WEIGHT_DECAY),
-						   beta_regularizer=l2(WEIGHT_DECAY))(x)
-	x = ReLU()(x)
-	x = Conv2D(n_filters, (1, 1), strides=(1, 1), use_bias=False,
-			   kernel_regularizer=l2(WEIGHT_DECAY))(x)
+    # Dimensionality reduction
+    x = BatchNormalization(
+        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
+    )(x)
+    x = ReLU()(x)
+    x = Conv2D(
+        n_filters,
+        (1, 1),
+        strides=(1, 1),
+        use_bias=False,
+        kernel_regularizer=l2(WEIGHT_DECAY),
+    )(x)
 
-	# Bottleneck layer - feature pooling when strides=(2, 2)
-	x = BatchNormalization(gamma_regularizer=l2(WEIGHT_DECAY),
-						   beta_regularizer=l2(WEIGHT_DECAY))(x)
-	x = ReLU()(x)
-	x = Conv2D(n_filters, (3, 3), strides=strides, padding='same',
-			   use_bias=False, kernel_regularizer=l2(WEIGHT_DECAY))(x)
+    # Bottleneck layer - feature pooling when strides=(2, 2)
+    x = BatchNormalization(
+        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
+    )(x)
+    x = ReLU()(x)
+    x = Conv2D(
+        n_filters,
+        (3, 3),
+        strides=strides,
+        padding="same",
+        use_bias=False,
+        kernel_regularizer=l2(WEIGHT_DECAY),
+    )(x)
 
-	# Dimensionality restoration - increase the number of filters by 2X (or 4X)
-	x = BatchNormalization(gamma_regularizer=l2(WEIGHT_DECAY),
-						   beta_regularizer=l2(WEIGHT_DECAY))(x)
-	x = ReLU()(x)
-	x = Conv2D(n_filters * n, (1, 1), strides=(1, 1), use_bias=False,
-			   kernel_regularizer=l2(WEIGHT_DECAY))(x)
+    # Dimensionality restoration - increase the number of filters by 2X (or 4X)
+    x = BatchNormalization(
+        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
+    )(x)
+    x = ReLU()(x)
+    x = Conv2D(
+        n_filters * n,
+        (1, 1),
+        strides=(1, 1),
+        use_bias=False,
+        kernel_regularizer=l2(WEIGHT_DECAY),
+    )(x)
 
-	# Add the projection shortcut to the output of the residual block
-	x = Add()([shortcut, x])
-	return x
+    # Add the projection shortcut to the output of the residual block
+    x = Add()([shortcut, x])
+    return x
 
 
 def classifier(x, n_classes=10):
-	''' Construct a Classifier
-		x         : input into the classifier
-		n_classes : number of classes
-	'''
-	# Pool the feature maps after the end of all the residual blocks
-	x = BatchNormalization()(x)
-	x = ReLU()(x)
-	x = AveragePooling2D(pool_size=8)(x)
+    """Construct a Classifier
+    x         : input into the classifier
+    n_classes : number of classes
+    """
+    # Pool the feature maps after the end of all the residual blocks
+    x = BatchNormalization()(x)
+    x = ReLU()(x)
+    x = AveragePooling2D(pool_size=8)(x)
 
-	# Flatten into 1D vector
-	x = GlobalAvgPool2D()(x)
+    # Flatten into 1D vector
+    x = GlobalAvgPool2D()(x)
 
-	# Define the ODIN as specified in Section 3.1.1 of
-	# https://arxiv.org/abs/2002.11297
-	x1 = Dropout(0.7)(x)
-	h = Dense(n_classes, kernel_initializer="he_normal")(x1)
+    # Define the ODIN as specified in Section 3.1.1 of
+    # https://arxiv.org/abs/2002.11297
+    x1 = Dropout(0.7)(x)
+    h = Dense(n_classes, kernel_initializer="he_normal")(x1)
 
-	g = Dense(n_classes, kernel_regularizer=l2(WEIGHT_DECAY))(x1)
-	g = BatchNormalization(gamma_regularizer=l2(WEIGHT_DECAY),
-						   beta_regularizer=l2(WEIGHT_DECAY))(g)
-	g = Activation("sigmoid")(g)
+    g = Dense(n_classes, kernel_regularizer=l2(WEIGHT_DECAY))(x1)
+    g = BatchNormalization(
+        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
+    )(g)
+    g = Activation("sigmoid")(g)
+    outputs = tf.math.divide(h, g)
 
-	outputs = tf.math.divide(h, g)
-	model = tf.keras.Model(inputs, outputs)
-
-	return model
+    return outputs
 
 
 # -------------------

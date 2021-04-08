@@ -46,9 +46,7 @@ def stem(inputs):
         use_bias=False,
         kernel_regularizer=l2(WEIGHT_DECAY),
     )(inputs)
-    x = BatchNormalization(
-        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
-    )(x)
+    x = BatchNormalization()(x)
     x = ReLU()(x)
     return x
 
@@ -101,9 +99,7 @@ def identity_block(x, n_filters, n=2):
     ## Construct the 1x1, 3x3, 1x1 residual block (fig 3c)
 
     # Dimensionality reduction
-    x = BatchNormalization(
-        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
-    )(x)
+    x = BatchNormalization()(x)
     x = ReLU()(x)
     x = Conv2D(
         n_filters,
@@ -114,9 +110,7 @@ def identity_block(x, n_filters, n=2):
     )(x)
 
     # Bottleneck layer
-    x = BatchNormalization(
-        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
-    )(x)
+    x = BatchNormalization()(x)
     x = ReLU()(x)
     x = Conv2D(
         n_filters,
@@ -128,11 +122,7 @@ def identity_block(x, n_filters, n=2):
     )(x)
 
     # Dimensionality restoration - increase the number of output filters by 2X or 4X
-    x = BatchNormalization(
-        gamma_regularizer=l2(WEIGHT_DECAY),
-        beta_regularizer=l2(WEIGHT_DECAY),
-        gamma_initializer="zeros",
-    )(x)
+    x = BatchNormalization()(x)
     x = ReLU()(x)
     x = Conv2D(
         n_filters * n,
@@ -168,9 +158,7 @@ def projection_block(x, n_filters, strides=(2, 2), n=2):
     ## Construct the 1x1, 3x3, 1x1 convolution block
 
     # Dimensionality reduction
-    x = BatchNormalization(
-        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
-    )(x)
+    x = BatchNormalization()(x)
     x = ReLU()(x)
     x = Conv2D(
         n_filters,
@@ -181,9 +169,7 @@ def projection_block(x, n_filters, strides=(2, 2), n=2):
     )(x)
 
     # Bottleneck layer - feature pooling when strides=(2, 2)
-    x = BatchNormalization(
-        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
-    )(x)
+    x = BatchNormalization()(x)
     x = ReLU()(x)
     x = Conv2D(
         n_filters,
@@ -195,9 +181,7 @@ def projection_block(x, n_filters, strides=(2, 2), n=2):
     )(x)
 
     # Dimensionality restoration - increase the number of filters by 2X (or 4X)
-    x = BatchNormalization(
-        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
-    )(x)
+    x = BatchNormalization()(x)
     x = ReLU()(x)
     x = Conv2D(
         n_filters * n,

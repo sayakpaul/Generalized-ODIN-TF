@@ -215,9 +215,7 @@ def classifier(x, n_classes=10):
     h = Dense(n_classes, kernel_initializer="he_normal")(x1)
 
     g = Dense(n_classes, kernel_regularizer=l2(WEIGHT_DECAY))(x1)
-    g = BatchNormalization(
-        gamma_regularizer=l2(WEIGHT_DECAY), beta_regularizer=l2(WEIGHT_DECAY)
-    )(g)
+    g = BatchNormalization()(g)
     g = Activation("sigmoid")(g)
     outputs = tf.math.divide(h, g)
 

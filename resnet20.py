@@ -214,7 +214,7 @@ def classifier(x, n_classes=10):
     x1 = Dropout(0.7)(x)
     h = Dense(n_classes, kernel_initializer="he_normal")(x1)
 
-    g = Dense(n_classes, kernel_regularizer=l2(WEIGHT_DECAY))(x1)
+    g = Dense(1, kernel_regularizer=l2(WEIGHT_DECAY))(x1)
     g = BatchNormalization()(g)
     g = Activation("sigmoid")(g)
     outputs = tf.math.divide(h, g)

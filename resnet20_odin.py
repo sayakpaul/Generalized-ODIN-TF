@@ -209,11 +209,18 @@ def classifier(x, n_classes=10):
     # Flatten into 1D vector
     x = GlobalAvgPool2D()(x)
 
-    # Final Dense Outputting Layer
-    outputs = Dense(n_classes, activation="softmax",
-                    kernel_initializer="he_normal")(x)
+    # Define the ODIN as specified in Section 3.1.1 of
+    # https://arxiv.org/abs/2002.11297
+    x1 = Dropout(0.7)(x)
+    h = Dense(n_classes, kernel_initializer="he_normal")(x1)
+
+    g = Dense(1, kernel_regularizer=l2(WEIGHT_DECAY))(x1)
+    g = BatchNormalization()(g)
+    g = Activation("sigmoid")(g)
+    outputs = tf.math.divide(h, g)
 
     return outputs
+
 
 # -------------------
 # Model      | n   |

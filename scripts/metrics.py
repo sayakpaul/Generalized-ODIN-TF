@@ -14,11 +14,11 @@ def get_confidence(loader, model, mask, type="odin"):
 
 
 def calculate_auroc(in_loader, out_loader, model, mask, type):
-    confidence_in, correct, num_correct = get_confidence(
+    confidence_in = get_confidence(
         in_loader, model=model, mask=mask, type=type
     )
     in_score = -confidence_in
-    confidence_out, correct_out, num_correct_out = get_confidence(
+    confidence_out = get_confidence(
         out_loader, model=model, mask=mask, type=type
     )
     out_score = -confidence_out

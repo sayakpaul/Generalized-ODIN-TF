@@ -47,3 +47,17 @@ Available [here](https://github.com/sayakpaul/Generalized-ODIN-TF/releases/downl
 
 * Thanks to Yen-Chang Hsu (first author of the paper) for providing constant guidance. 
 * Thanks to the [ML-GDE program](https://developers.google.com/programs/experts/) for providing GCP support. 
+
+## Citation
+
+```
+@INPROCEEDINGS{9156473,
+  author={Y. -C. {Hsu} and Y. {Shen} and H. {Jin} and Z. {Kira}},
+  booktitle={2020 IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)}, 
+  title={Generalized ODIN: Detecting Out-of-Distribution Image Without Learning From Out-of-Distribution Data}, 
+  year={2020},
+  volume={},
+  number={},
+  pages={10948-10957},
+  doi={10.1109/CVPR42600.2020.01096}}
+```

@@ -210,10 +210,10 @@ def classifier(x, n_classes=10):
     x = GlobalAvgPool2D()(x)
 
     # Final Dense Outputting Layer
-    outputs = Dense(n_classes, activation="softmax",
-                    kernel_initializer="he_normal")(x)
+    outputs = Dense(n_classes, activation="softmax", kernel_initializer="he_normal")(x)
 
     return outputs
+
 
 # -------------------
 # Model      | n   |

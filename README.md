@@ -30,10 +30,14 @@ Train a model on the CIFAR-10 dataset (in-distribution dataset) in a way that ma
 
 ## Results
 
-|                  	| AUROC 	| TNR@TPR95 	|
-|:----------------:	|:-----:	|:---------:	|
-| Generalized ODIN 	| **92.15** 	|   **54.18**   	|
-|     Baseline     	| 91.14 	|   40.53   	|
+<p align="center">
+
+|                  	| Train Top-1 	| Test Top-1 	| AUROC 	| TNR@TPR95 	|
+|------------------	|:-----------:	|:----------:	|:-----:	|:---------:	|
+| Generalized ODIN 	|    99.46    	|    91.42   	| **92.15** 	|   **54.18**   	|
+|     Baseline     	|    99.58    	|    90.7    	| 91.14 	|   40.53   	|
+
+</p>
 
 ## Pre-trained models
 

@@ -48,7 +48,7 @@ Available [here](https://github.com/sayakpaul/Generalized-ODIN-TF/releases/downl
 * Thanks to Yen-Chang Hsu (first author of the paper) for providing constant guidance. 
 * Thanks to the [ML-GDE program](https://developers.google.com/programs/experts/) for providing GCP support. 
 
-## Citation
+## Paper citation
 
 ```
 @INPROCEEDINGS{9156473,

@@ -1,9 +1,9 @@
 # Generalized-ODIN-TF
 TensorFlow 2 implementation of the paper [Generalized ODIN: Detecting Out-of-distribution Image without Learning from Out-of-distribution Data](https://arxiv.org/abs/2002.11297).
 
-Detecting out-of-distribution (OOD) data is a challenging problem for deep neural networks to tackle especially when they weren't exposed to OOD data. One way to solve this is to [expose networks](https://arxiv.org/abs/1812.04606) to OOD data _during_ its training. But this can become a brittle approach when the space of the OOD data gets larger for a network. What if we present a network with OOD data its _hasn't_ been exposed to during its training? 
+Detecting out-of-distribution (OOD) data is a challenging problem for deep neural networks to tackle especially when they weren't exposed to OOD data. One way to solve this is to [expose networks](https://arxiv.org/abs/1812.04606) to OOD data _during_ its training. But this can become a brittle approach when the space of the OOD data gets larger for a network. What if we present a network with OOD data it _hasn't_ been exposed to during its training? 
 
-Therefore, we need a better way to deal with the problem. Generalized ODIN is good first step toward that. 
+Therefore, we need a better way to deal with the problem. Generalized ODIN is a good first step toward that. 
 
 ## Organization of the files
 

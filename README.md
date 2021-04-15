@@ -3,14 +3,14 @@ TensorFlow 2 implementation of the paper [Generalized ODIN: Detecting Out-of-dis
 
 Detecting out-of-distribution (OOD) data is a challenging problem for deep neural networks to tackle especially when they weren't exposed to OOD data. One way to solve this is to [expose networks](https://arxiv.org/abs/1812.04606) to OOD data _during_ its training. But this can become a brittle approach when the space of the OOD data gets larger for a network. What if we present a network with OOD data it _hasn't_ been exposed to during its training? 
 
-Therefore, we need a better way to deal with the problem. Generalized ODIN is a good first step toward that. 
+Therefore, we need a better way to deal with the problem. Generalized ODIN (**O**ut-of-**DI**stribution detector for **N**eural networks) is a good first step toward that. 
 
 ## Organization of the files
 
 ```shell
 ├── Baseline.ipynb: Trains a ResNet20 model on the CIFAR-10 dataset (in-distribution dataset). We will consider this to be our baseline model.
 ├── Calculate_Epsilon.ipynb: Searches for the best epsilon (perturbation magnitude) as proposed in the paper. 
-├── Evaluation_OOD.ipynb: Evaluates the baseline model as well as the Generalized ODIN (Out-of-DIstribution detector for Neural networks) model.
+├── Evaluation_OOD.ipynb: Evaluates the baseline model as well as the Generalized ODIN model.
 ├── Generalized_ODIN.ipynb: Trains the Generalized ODIN model on the CIFAR-10 dataset. 
 └── scripts
     ├── metrics.py: Utilities for evalutation metrics (AUROC and TNR@TPR95)
@@ -18,7 +18,7 @@ Therefore, we need a better way to deal with the problem. Generalized ODIN is a 
     └── resnet20_odin.py: ResNet20 with Generalized ODIN utilities. 
 ```
 
-TNR: True Negative Rate, TPR: True Positive Rate
+_TNR: True Negative Rate, TPR: True Positive Rate_
 
 ## Task of interest
 

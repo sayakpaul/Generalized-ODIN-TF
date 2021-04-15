@@ -43,7 +43,7 @@ Train a model on the CIFAR-10 dataset (in-distribution dataset) in a way that ma
 
 ## TODO
 
-[ ] Add WideResNet-28-10 results
+- [ ] Add WideResNet-28-10 results
 
 ## How to use these models to detect OOD samples?
 

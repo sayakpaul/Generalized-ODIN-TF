@@ -18,6 +18,8 @@ Therefore, we need a better way to deal with the problem. Generalized ODIN is a 
     └── resnet20_odin.py: ResNet20 with Generalized ODIN utilities. 
 ```
 
+TNR: True Negative Rate, TPR: True Positive Rate
+
 ## Task of interest
 
 Train a model on the CIFAR-10 dataset (in-distribution dataset) in a way that maximizes its capability to detect OOD samples. This project uses the [SVHN dataset](http://ufldl.stanford.edu/housenumbers/) for the OOD samples.
@@ -39,13 +41,25 @@ Train a model on the CIFAR-10 dataset (in-distribution dataset) in a way that ma
 
 </p>
 
+## TODO
+
+[ ] Add WideResNet-28-10 results
+
+## How to use these models to detect OOD samples?
+
+Take the output of the ODIN and see if it crosses a threshold. If it does then then the corresponding samples IID otherwise OOD.
+
+Here's an advice I got from Yen-Chang Hsu (first author of the paper):
+
+> The selection of thresholds is application-dependent. It will still rely on having a validation set (which includes in-distribution and optionally OOD data) for an application. One way is to select the threshold is pick one that makes TPR=95%.
+
 ## Pre-trained models
 
 Available [here](https://github.com/sayakpaul/Generalized-ODIN-TF/releases/download/v1.0.0/models.tar.gz).
 
 ## Acknowledgements
 
-* Thanks to Yen-Chang Hsu (first author of the paper) for providing constant guidance. 
+* Thanks to Yen-Chang Hsu for providing constant guidance. 
 * Thanks to the [ML-GDE program](https://developers.google.com/programs/experts/) for providing GCP support. 
 
 ## Paper citation

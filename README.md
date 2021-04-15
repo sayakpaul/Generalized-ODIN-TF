@@ -41,10 +41,6 @@ Train a model on the CIFAR-10 dataset (in-distribution dataset) in a way that ma
 
 </p>
 
-## TODO
-
-- [ ] Add WideResNet-28-10 results
-
 ## How to use these models to detect OOD samples?
 
 Take the output of the ODIN and see if it crosses a threshold. If it does then the corresponding samples IID otherwise OOD.

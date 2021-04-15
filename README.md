@@ -47,7 +47,7 @@ Train a model on the CIFAR-10 dataset (in-distribution dataset) in a way that ma
 
 ## How to use these models to detect OOD samples?
 
-Take the output of the ODIN and see if it crosses a threshold. If it does then then the corresponding samples IID otherwise OOD.
+Take the output of the ODIN and see if it crosses a threshold. If it does then the corresponding samples IID otherwise OOD.
 
 Here's an advice I got from Yen-Chang Hsu (first author of the paper):
 

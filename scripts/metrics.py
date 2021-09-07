@@ -1,6 +1,5 @@
 # Code referred from:
-# https://github.com/pokaxpoka/deep_Mahalanobis_detector/blob
-# /master/calculate_log.py
+# https://github.com/pokaxpoka/deep_Mahalanobis_detector/blob/master/calculate_log.py
 
 import tensorflow as tf
 import numpy as np
